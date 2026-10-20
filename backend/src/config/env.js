@@ -51,10 +51,11 @@ export const env = {
   port,
   nodeEnv: process.env.NODE_ENV || 'development',
   mongoUri,
-  clientOrigin: process.env.CLIENT_ORIGIN || 'http://localhost:5173',
+  clientOrigin: process.env.CLIENT_ORIGIN || '*',
   baseUrl,
   trustProxy,
   isProduction: process.env.NODE_ENV === 'production',
   isDevelopment: process.env.NODE_ENV !== 'production',
 };
+
 

@@ -1,16 +1,28 @@
 /**
- * Base API configuration service for LinkLite frontend.
- * Reads environment configuration with safe local development fallback.
+ * Known backend environments:
+ * - Option 1 (Hosted Render): https://link-lite-waeq.onrender.com/api
+ * - Option 2 (Local Dev):     http://localhost:5000/api
  */
-export const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL?.trim().replace(/\/$/, '') || 'http://localhost:5000/api';
+export const HOSTED_API_BASE_URL = 'https://link-lite-waeq.onrender.com/api';
+export const LOCAL_API_BASE_URL = 'http://localhost:5000/api';
+
+export const HOSTED_SHORT_URL_BASE = 'https://link-lite-waeq.onrender.com';
+export const LOCAL_SHORT_URL_BASE = 'http://localhost:5000';
 
 /**
- * Optional public short link base URL.
+ * Base API configuration service for LinkLite frontend.
+ * Reads environment configuration, defaulting to hosted Render backend.
+ */
+export const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL?.trim().replace(/\/$/, '') || HOSTED_API_BASE_URL;
+
+/**
+ * Public short link base URL.
  * When defined, overrides the default domain returned in item.shortUrl from backend.
  */
 export const PUBLIC_SHORT_URL_BASE =
-  import.meta.env.VITE_PUBLIC_SHORT_URL_BASE?.trim().replace(/\/$/, '') || '';
+  import.meta.env.VITE_PUBLIC_SHORT_URL_BASE?.trim().replace(/\/$/, '') ||
+  (API_BASE_URL.includes('onrender.com') ? HOSTED_SHORT_URL_BASE : '');
 
 /**
  * Safely constructs or retrieves the short URL for a link object.
@@ -28,8 +40,10 @@ export function getLinkShortUrl(item) {
   if (item.shortUrl) {
     return item.shortUrl;
   }
-  return item.shortCode ? `http://localhost:5000/${item.shortCode}` : '';
+  const dynamicBase = API_BASE_URL.replace(/\/api\/?$/, '') || LOCAL_SHORT_URL_BASE;
+  return item.shortCode ? `${dynamicBase}/${item.shortCode}` : '';
 }
+
 
 /**
  * Checks backend health and database connectivity status.

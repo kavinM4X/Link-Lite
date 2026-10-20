@@ -503,9 +503,10 @@ export const SettingsPage = () => {
                     wordBreak: 'break-all',
                   }}
                 >
-                  {PUBLIC_SHORT_URL_BASE || 'Derived from backend baseUrl (http://localhost:5000)'}
+                  {PUBLIC_SHORT_URL_BASE || 'Derived from backend baseUrl'}
                 </div>
               </div>
+
             </div>
           </div>
 

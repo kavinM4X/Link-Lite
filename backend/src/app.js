@@ -20,7 +20,7 @@ if (env.trustProxy !== false) {
 app.use(helmet());
 
 
-// CORS configuration - support single origin or comma-separated list
+// CORS configuration - support single origin, comma-separated list, or wildcard
 const allowedOrigins = env.clientOrigin.split(',').map((origin) => origin.trim());
 app.use(
   cors({
@@ -28,7 +28,10 @@ app.use(
       // Allow requests with no origin (like mobile apps, curl, or Postman)
       if (!origin) return callback(null, true);
 
-      if (allowedOrigins.includes('*') || allowedOrigins.includes(origin)) {
+      // Always permit local development origins on any dynamic port (e.g. 5173, 5174, etc.)
+      const isLocalhost = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
+
+      if (allowedOrigins.includes('*') || allowedOrigins.includes(origin) || isLocalhost) {
         return callback(null, true);
       }
 
@@ -40,6 +43,7 @@ app.use(
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   })
 );
+
 
 // HTTP request logging
 if (env.isDevelopment) {
