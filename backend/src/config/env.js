@@ -9,8 +9,9 @@ dotenv.config();
 export const validateEnv = () => {
   const missing = [];
 
-  if (!process.env.MONGODB_URI) {
-    missing.push('MONGODB_URI');
+  const mongoUri = process.env.MONGODB_URI || process.env.MONGO_URI;
+  if (!mongoUri) {
+    missing.push('MONGODB_URI (or MONGO_URI)');
   }
 
   if (process.env.BASE_URL) {
@@ -44,10 +45,12 @@ const trustProxy = process.env.TRUST_PROXY !== undefined
   ? (process.env.TRUST_PROXY === 'true' ? true : parseInt(process.env.TRUST_PROXY, 10) || process.env.TRUST_PROXY)
   : (process.env.NODE_ENV === 'production' ? 1 : false);
 
+const mongoUri = process.env.MONGODB_URI || process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/linklite';
+
 export const env = {
   port,
   nodeEnv: process.env.NODE_ENV || 'development',
-  mongoUri: process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/linklite',
+  mongoUri,
   clientOrigin: process.env.CLIENT_ORIGIN || 'http://localhost:5173',
   baseUrl,
   trustProxy,
